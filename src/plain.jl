@@ -12,8 +12,4 @@ wrap(x::Any) = JuliaObject(Shim(x))
 
 PyBase._unwrap(shim::Shim) = PyBase.super(shim)
 
-function (shim::Shim)(args...; kwargs...)
-    return super(shim)(args...; kwargs...)
-end
-
 end  # module
