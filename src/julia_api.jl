@@ -32,9 +32,6 @@ _wrap(obj::Union{
 # converted by PyCall in an irreversible manner (e.g., Symbol,
 # BitArray, etc.).
 
-_unwrap(x::Any) = x
-_unwrap(shim::PyBase.AbstractShim) = PyBase.super(shim)
-
 
 """
     wrapcall(f, args...; kwargs...)

@@ -4,6 +4,8 @@ abstract type AbstractShim end
 super(shim::AbstractShim) = shim.self
 PyCall.docstring(shim::AbstractShim) = PyCall.docstring(super(shim))
 
+_unwrap(x::Any) = x
+
 getattr(self::Any, name::AbstractString) = getattr(self, Symbol(name))
 setattr!(self::Any, name::AbstractString, value) =
     setattr!(self, Symbol(name), value)

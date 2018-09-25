@@ -40,7 +40,7 @@ class JuliaAPI(object):
         self._getattr = self.lookupapi((self.PyBase, "getattr"), wrap=False)
         # self.default_flavor = self.lookupapi((self.PyBase, "Plain.wrap"),
         #                                      wrap=False)
-        self._unwrap = self.eval("_unwrap", scope=self.api, wrap=False)
+        self._unwrap = self.eval("_unwrap", scope=self.PyBase, wrap=False)
 
     @autopeal
     def eval(self, code, wrap=None, **kwargs):
