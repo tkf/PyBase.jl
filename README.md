@@ -1,4 +1,4 @@
-# PyBase
+# PyBase.jl --- Toward Julian interface for Pythonic wrapper
 
 [![Build Status](https://travis-ci.org/tkf/PyBase.jl.svg?branch=master)](https://travis-ci.org/tkf/PyBase.jl)
 

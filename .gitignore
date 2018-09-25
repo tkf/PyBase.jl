@@ -1,4 +1,7 @@
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
+*.pyc
+.cache
+.pytest_cache
 /Manifest.toml
