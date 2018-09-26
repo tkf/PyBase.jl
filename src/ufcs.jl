@@ -7,7 +7,7 @@ Usage:
 PyCall.PyObject(self::MyModule.MyType) = PyBase.UFCS.wrap(self)
 ```
 
-It then translates Python method call `self.NAME(args..., **kwargs)` to
+It then translates Python method call `self.NAME(*args, **kwargs)` to
 
 ```julia
 MyModule.MyType.NAME(self, args...; kwargs...)  # or
@@ -16,13 +16,14 @@ MyModule.MyType.NAME!(self, args...; kwargs...)
 
 in Julia where `NAME` is a placeholder (i.e., it can be a method named
 `solve` or `plot`).  If both `NAME` and `NAME!` exist, `NAME` is used
-unless `True` is passed to the keyword argument `inplace`, i.e.,
+unless `True` is passed to the special keyword argument `inplace`, i.e.,
 
 ```python
 # in Python:                               #    in Julia:
-self.NAME(*args, **kwargs)                 # => NAME(self, *args, **kwargs)
-self.NAME(*args, inplace=False, **kwargs)  # => NAME(self, *args, **kwargs)
-self.NAME(*args, inplace=True, **kwargs)   # => NAME!(self, *args, **kwargs)
+self.NAME(*args, **kwargs)                 # => NAME(self, args...; kwargs...)
+                                           # or NAME!(self, args...; kwargs...)
+self.NAME(*args, inplace=False, **kwargs)  # => NAME(self, args...; kwargs...)
+self.NAME(*args, inplace=True, **kwargs)   # => NAME!(self, args...; kwargs...)
 ```
 
 The modules in which method `NAME` is searched can be specified as the
@@ -42,8 +43,8 @@ PyBase.getattr(self::MyModule.MyType, name::Symbol)  # and/or
 PyBase.getattr(self::MyModule.MyType, ::Val{name})
 ```
 
-can still control the behavior of Python's `__getattr__` **if** `name`
-is not handled by the above UFCS mechanism.
+can still control the behavior of Python's `__getattr__` *if* `name`
+is not already handled by the above UFCS mechanism.
 
 [^UFCS]: [Uniform Function Call Syntax --- Wikipedia](https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax)
 """
