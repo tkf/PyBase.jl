@@ -1,9 +1,4 @@
 using Documenter
-using PyBase
-
-makedocs(
-    modules = [PyBase]
-)
 
 # Documenter can also automatically deploy documentation to gh-pages.
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
