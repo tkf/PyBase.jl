@@ -1,5 +1,5 @@
 """
-"[Uniform Function Call Syntax]" wrapper.
+Uniform Function Call Syntax [^UFCS] wrapper.
 
 Usage:
 
@@ -45,8 +45,7 @@ PyBase.getattr(self::MyModule.MyType, ::Val{name})
 can still control the behavior of Python's `__getattr__` **if** `name`
 is not handled by the above UFCS mechanism.
 
-[Uniform Function Call Syntax]:
-https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax
+[^UFCS]: [Uniform Function Call Syntax --- Wikipedia](https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax)
 """
 module UFCS
 
@@ -62,9 +61,9 @@ end
 # @generated or @pure function.
 
 """
-    PyBase.UFCS(self, [modules]) :: PyObject
+    PyBase.UFCS.wrap(self, [modules]) :: PyObject
 
-"Uniform Function Call Syntax" wrapper.  See `?PyBase.UFCS` for details.
+"Uniform Function Call Syntax" wrapper.  See [`PyBase.UFCS`](@ref) for details.
 """
 wrap(x::T, modules::Vector{Module} = [parentmodule(T)]) where T =
     JuliaObject(Shim(x, modules))
