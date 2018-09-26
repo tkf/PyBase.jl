@@ -111,3 +111,21 @@ PyBase.UFCS.wrap
 PyBase.Plain
 PyBase.Plain.wrap
 ```
+
+## Python interface methods
+
+`PyBase` provides interface for defining special methods for
+[Python data model](https://docs.python.org/3/reference/datamodel.html).
+For Python's method `__$NAME__`, you can overload `PyBase.$NAME` or
+`PyBase.$NAME!` (if it is expected to mutate `self`).
+
+```@docs
+PyBase.getattr
+PyBase.setattr!
+PyBase.delattr!
+PyBase.dir
+PyBase.convert_itemkey
+PyBase.getitem
+PyBase.setitem!
+PyBase.delitem!
+```

@@ -1,5 +1,6 @@
 module PyBase
 
+include("docs.jl")
 include("macro.jl")
 include("core.jl")
 include("julia_api.jl")
