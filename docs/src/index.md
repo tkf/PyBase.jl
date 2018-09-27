@@ -5,35 +5,26 @@
 Suppose you have a Julia type and expose its API to the Python world:
 
 ```jldoctest ufcs-example
-mutable struct MyType
-    x::Number
-end
+julia> mutable struct MyType
+           x::Number
+       end
 
-# Those methods have to be automatically treated via UFCS
-add1!(self::MyType) = self.x += 1
+julia> add1!(self::MyType) = self.x += 1;
 
-add2(self::MyType) = self.x + 2
+julia> add2(self::MyType) = self.x + 2;
 
-add3(self::MyType) = self.x + 3
-add3!(self::MyType) = self.x += 3
-
-nothing
-# output
-
+julia> add3(self::MyType) = self.x + 3
+       add3!(self::MyType) = self.x += 3;
 ```
 
 Using `PyBase`, it is just a one line to wrap it into a Python
 interface:
 
 ```jldoctest ufcs-example
-using PyCall
-using PyBase
+julia> using PyCall
+       using PyBase
 
-PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self)
-
-nothing
-# output
-
+julia> PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self);
 ```
 
 Then Python users can use `MyType` as a Python object constructor by
@@ -42,22 +33,18 @@ demonstration purpose, let's send it to Python namespace using
 PyCall's `@py_str` macro:
 
 ```jldoctest ufcs-example
-py"""
-MyType = $MyType  # emulating "from julia.MyModule import MyType"
-"""
-# output
-
+julia> py"""
+       MyType = $MyType  # emulating "from julia.MyModule import MyType"
+       """
 ```
 
 Python users can now use `MyType` as if it is a Python function.
 
 ```jldoctest ufcs-example
-py"""
-obj = MyType(0)
-assert obj.x == 0
-"""
-# output
-
+julia> py"""
+       obj = MyType(0)
+       assert obj.x == 0
+       """
 ```
 
 Since `MyType` uses [`PyBase.UFCS.wrap`](@ref), Julia functions taking
@@ -65,35 +52,37 @@ Since `MyType` uses [`PyBase.UFCS.wrap`](@ref), Julia functions taking
 method of `MyType`:
 
 ```jldoctest ufcs-example
-py"""
-obj.add1()
-assert obj.x == 1
+julia> py"""
+       obj.add1()
+       assert obj.x == 1
+       """
 
-assert obj.add2() == 3
-assert obj.x == 1
+julia> py"""
+       assert obj.add2() == 3
+       assert obj.x == 1
+       """
 
-assert obj.add3() == 4
-assert obj.x == 1  # default to inplace=False
+julia> py"""
+       assert obj.add3() == 4
+       assert obj.x == 1  # default to inplace=False
+       """
 
-obj.add3(inplace=True)
-assert obj.x == 4
-"""
-# output
-
+julia> py"""
+       obj.add3(inplace=True)
+       assert obj.x == 4
+       """
 ```
 
 It may be useful to provide custom Python methods.  This can be done
 by overloading [`PyBase.getattr`](@ref):
 
 ```jldoctest ufcs-example
-PyBase.getattr(self::MyType, ::Val{:explicit_method}) =
-    (arg) -> "explicit method call with $arg"
+julia> PyBase.getattr(self::MyType, ::Val{:explicit_method}) =
+           (arg) -> "explicit method call with $arg"
 
-py"""
-assert obj.explicit_method(123) == "explicit method call with 123"
-"""
-# output
-
+julia> py"""
+       assert obj.explicit_method(123) == "explicit method call with 123"
+       """
 ```
 
 ## Pre-defined wrapper factories
