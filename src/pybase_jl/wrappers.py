@@ -200,8 +200,7 @@ class JuliaObject(object):
         if name.startswith("_"):
             super(JuliaObject, self).__setattr__(name, value)
             return
-        symbol = self.__julia.Symbol(name)
-        self.__julia.setproperty_b(self.__jlwrap, symbol, peal(value))
+        self.__julia.setattr(self.__jlwrap, name, peal(value))
 
     # TODO: def __delattr__(self, name, value):
 
