@@ -33,7 +33,8 @@ def test_symbol_eval(julia):
 
 
 def test_symbol_call(julia):
-    a = julia.eval("() -> :a")()
+    # a = julia.eval("() -> :a")()
+    a = julia.wrapcall(julia.eval("() -> :a"))
     assert julia.eval("a -> a isa Symbol")(a)
 
 
@@ -211,10 +212,10 @@ def test_bitarray_rshift(julia):
     assert all(actual == desired)
 
 
-
 def test_constructor(julia):
     BitArray = julia.BitArray
-    ba = BitArray([1, 0, 1, 0])
+    # ba = BitArray([1, 0, 1, 0])
+    ba = julia.wrapcall(BitArray, [1, 0, 1, 0])
     assert isinstance(ba, JuliaObject)
 
 

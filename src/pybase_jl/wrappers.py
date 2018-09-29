@@ -208,7 +208,7 @@ class JuliaObject(object):
         return self.__julia.py_names(self.__jlwrap)
 
     def __call__(self, *args, **kwargs):
-        return self.__julia.wrapcall(self.__jlwrap, *args, **kwargs)
+        return self.__jlwrap(*args, **kwargs)
 
     def __eq__(self, other):
         return self.__julia.pybroadcast("==", self.__jlwrap, other)
@@ -517,6 +517,13 @@ def autopeal(fun):
         # to work.
         args = [peal(a) for a in args]
         kwds = {k: peal(v) for (k, v) in kwds.items()}
+        return fun(self, *args, **kwds)
+    return wrapper
+
+
+def autowrap(fun):
+    @functools.wraps(fun)
+    def wrapper(self, *args, **kwds):
         julia = self._JuliaObject__julia
         return julia.maybe_wrap(fun(self, *args, **kwds))
     return wrapper
@@ -531,7 +538,7 @@ for name, fun in vars(JuliaObject).items():
     if not isinstance(fun, FunctionType):
         continue
     # TODO: skip single-argument (i.e., `self`-only) methods (optimization)
-    setattr(JuliaObject, name, autopeal(fun))
+    setattr(JuliaObject, name, autowrap(autopeal(fun)))
 
 
 class JuliaCallback(object):

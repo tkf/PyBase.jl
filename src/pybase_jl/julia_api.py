@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import sys
 
-from .wrappers import JuliaObject, peal
+from .wrappers import JuliaObject, autopeal, peal
 
 
 def jl_name(name):
@@ -114,6 +114,7 @@ class JuliaAPI(object):
             return self.maybe_wrap(ans)
         return ans
 
+    @autopeal
     def wrapcall(self, *args, **kwargs):
         return self.maybe_wrap(self.__wrapcall(*args, **kwargs))
 
