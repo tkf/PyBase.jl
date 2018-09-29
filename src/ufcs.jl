@@ -50,6 +50,7 @@ is not already handled by the above UFCS mechanism.
 """
 module UFCS
 
+import PyCall
 using ..PyBase
 using ..JuliaAPI: JuliaObject, convert_pyindices
 
@@ -69,6 +70,54 @@ end
 wrap(x::T, modules::Vector{Module} = [parentmodule(T)]) where T =
     JuliaObject(Shim(x, modules))
 
+struct MethodShim{INP, OOP, SHIM}
+    name::Symbol
+    inp::INP
+    oop::OOP
+    shim::SHIM
+end
+
+(f::MethodShim{Nothing})(args...; kwargs...) =
+    f.oop(f.shim.self, args...; kwargs...)
+
+(f::MethodShim{<:Any, Nothing})(args...; kwargs...) =
+    f.inp(f.shim.self, args...; kwargs...)
+
+function (f::MethodShim)(args...; inplace=false, kwargs...)
+    # inplace=false by default (as in, e.g., pandas)
+    if inplace
+        f.inp(f.shim.self, args...; kwargs...)
+    else
+        f.oop(f.shim.self, args...; kwargs...)
+    end
+end
+
+function PyCall.docstring(f::MethodShim)
+    if f.inp isa Nothing
+        return PyCall.docstring(f.oop)
+    elseif f.oop isa Nothing
+        return PyCall.docstring(f.inp)
+    else
+        oop_name = string(f.oop)
+        inp_name = string(f.inp)
+        return """
+        A wrapper of $oop_name and $inp_name.
+
+        If keyword argument `inplace=False` (default) is given, it
+        calls $oop_name.  If `inplace=True` is given, it calls
+        $inp_name.
+
+        ---
+
+        $(PyCall.docstring(f.oop))
+
+        ---
+
+        $(PyCall.docstring(f.inp))
+        """
+    end
+end
+
 function lookup_function(modules, name)
     for m in modules
         if isdefined(m, name)
@@ -81,18 +130,8 @@ function PyBase.getattr(shim::Shim, name::Symbol)
     name! = Symbol(name, :!)
     inp_fun = lookup_function(shim.modules, name!)
     oop_fun = lookup_function(shim.modules, name)
-    if inp_fun != nothing && oop_fun != nothing
-        # inplace=false by default (as in, e.g., pandas)
-        return (args...; inplace=false, kwargs...) ->
-            if inplace
-                inp_fun(shim.self, args...; kwargs...)
-            else
-                oop_fun(shim.self, args...; kwargs...)
-            end
-    elseif inp_fun != nothing
-        return (args...; kwargs...) -> inp_fun(shim.self, args...; kwargs...)
-    elseif oop_fun != nothing
-        return (args...; kwargs...) -> oop_fun(shim.self, args...; kwargs...)
+    if inp_fun != nothing || oop_fun != nothing
+        return MethodShim(name, inp_fun, oop_fun, shim)
     else
         return PyBase.getattr(shim.self, name)
     end
