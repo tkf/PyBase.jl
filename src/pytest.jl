@@ -2,7 +2,7 @@
 # -*- mode: julia -*-
 #=
 # A hack to pass default options to julia:
-exec julia --project --color=yes --startup-file=no "${BASH_SOURCE[0]}" "$@"
+exec julia --color=yes --startup-file=no "${BASH_SOURCE[0]}" "$@"
 =#
 
 #=
