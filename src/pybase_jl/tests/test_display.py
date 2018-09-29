@@ -1,10 +1,24 @@
 from ..wrappers import JuliaObject
 
 
+full_mimes = [
+    "text/plain",
+    "text/html",
+    "text/markdown",
+    "text/latex",
+    "application/json",
+    "application/javascript",
+    "application/pdf",
+    "image/png",
+    "image/jpeg",
+    "image/svg+xml",
+]
+
+
 def test_mimebundle_doc(julia):
     obj = julia.eval("@doc sin")
     assert isinstance(obj, JuliaObject)
-    format_dict = obj._repr_mimebundle_()
+    format_dict = obj._repr_mimebundle_(include=full_mimes)
     mimes = set(format_dict)
     assert mimes >= {
         "text/plain",
@@ -24,7 +38,7 @@ def test_mimebundle_pyplot(julia):
     end
     """, wrap=True)
     assert isinstance(obj, JuliaObject)
-    format_dict = obj._repr_mimebundle_()
+    format_dict = obj._repr_mimebundle_(include=full_mimes)
     mimes = set(format_dict)
     assert mimes >= {
         "text/plain",

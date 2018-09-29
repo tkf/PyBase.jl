@@ -458,15 +458,15 @@ class JuliaObject(object):
     def _repr_mimebundle_(self, include=None, exclude=None):
         mimes = include or self.__config.mime_include or [
             "text/plain",
-            "text/html",
-            "text/markdown",
-            "text/latex",
-            "application/json",
-            "application/javascript",
-            "application/pdf",
+            # "text/html",
+            # "text/markdown",
+            # "text/latex",
+            # "application/json",
+            # "application/javascript",
+            # "application/pdf",
             "image/png",
-            "image/jpeg",
-            "image/svg+xml",
+            # "image/jpeg",
+            # "image/svg+xml",
         ]
         exclude = exclude or self.__config.mime_exclude
 
@@ -484,7 +484,10 @@ class JuliaObject(object):
             if mimetype in exclude:
                 continue
             if showable(mimetype, self.__jlwrap):
-                data = showraw(self.__jlwrap, mimetype)
+                try:
+                    data = showraw(self.__jlwrap, mimetype)
+                except Exception:
+                    continue
                 if (mimetype.startswith("text/") or
                         mimetype in ("application/javascript",
                                      "image/svg+xml")):

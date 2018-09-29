@@ -3,6 +3,9 @@ using PyCall
 abstract type AbstractShim end
 super(shim::AbstractShim) = shim.self
 PyCall.docstring(shim::AbstractShim) = PyCall.docstring(super(shim))
+Base.showable(mime::MIME, shim::AbstractShim) = showable(mime, super(shim))
+Base.show(io::IO, mime::MIME, shim::AbstractShim) = show(io, mime, super(shim))
+Base.show(io::IO, shim::AbstractShim) = show(io, super(shim))
 
 _unwrap(x::Any) = x
 
