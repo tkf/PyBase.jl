@@ -15,8 +15,8 @@ MyModule.MyType.NAME!(self, args...; kwargs...)
 ```
 
 in Julia where `NAME` is a placeholder (i.e., it can be a method named
-`solve` or `plot`).  If both `NAME` and `NAME!` exist, `NAME` is used
-unless `True` is passed to the special keyword argument `inplace`, i.e.,
+`solve` or `plot`).  If both `NAME` and `NAME!` exist, `NAME!` is used
+unless `False` is passed to the special keyword argument `inplace`, i.e.,
 
 ```python
 # in Python:                               #    in Julia:
@@ -83,8 +83,7 @@ end
 (f::MethodShim{<:Any, Nothing})(args...; kwargs...) =
     f.inp(f.shim.self, args...; kwargs...)
 
-function (f::MethodShim)(args...; inplace=false, kwargs...)
-    # inplace=false by default (as in, e.g., pandas)
+function (f::MethodShim)(args...; inplace=true, kwargs...)
     if inplace
         f.inp(f.shim.self, args...; kwargs...)
     else
@@ -103,9 +102,9 @@ function PyCall.docstring(f::MethodShim)
         return """
         A wrapper of $oop_name and $inp_name.
 
-        If keyword argument `inplace=False` (default) is given, it
-        calls $oop_name.  If `inplace=True` is given, it calls
-        $inp_name.
+        If keyword argument `inplace=True` (default) is given, it
+        calls $inp_name.  If `inplace=False` is given, it calls
+        $oop_name.
 
         ---
 

@@ -63,12 +63,12 @@ julia> py"""
        """
 
 julia> py"""
-       assert obj.add3() == 4
-       assert obj.x == 1  # default to inplace=False
+       assert obj.add3(inplace=False) == 4
+       assert obj.x == 1
        """
 
 julia> py"""
-       obj.add3(inplace=True)
+       obj.add3()  # default to inplace=True
        assert obj.x == 4
        """
 ```
