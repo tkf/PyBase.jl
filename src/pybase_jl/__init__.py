@@ -1,4 +1,4 @@
-from .wrappers import JuliaObject
+from .wrappers import JuliaObject, jlfunction
 from .julia_api import JuliaAPI
 
 

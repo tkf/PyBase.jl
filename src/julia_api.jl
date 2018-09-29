@@ -136,7 +136,18 @@ function eval_str(code::AbstractString;
 end
 
 
+"""
+    wrap_pycallable(x)
+
+Wrap a Python callable `x` as a Julia callable which tries to box
+arguments whenever automatic-conversion _could_ be lossy.  If `x` is
+not a `PyObject`, return `x` as-is.
+"""
+wrap_pycallable(x::PyObject) = jlfunction(x)
+wrap_pycallable(x::Any) = x
+
 const JuliaObject = PyNULL()
+const jlfunction = PyNULL()
 
 function __init__()
     # Setup Python package `pybase_jl`:
@@ -144,6 +155,7 @@ function __init__()
     pybase_jl = pyimport("pybase_jl")
     pybase_jl[:setup](eval_str, JuliaAPI)
     copy!(JuliaObject, pybase_jl[:JuliaObject])
+    copy!(jlfunction, pybase_jl[:jlfunction])
 
     # Don't wrap JuliaPy wrappers
     @require Pandas="eadc2687-ae89-51f9-a5d9-86b5a6373a9c" @eval begin
@@ -192,4 +204,4 @@ end
 
 end  # module
 
-using .JuliaAPI: pytest, _wrap
+using .JuliaAPI: pytest, _wrap, wrap_pycallable
