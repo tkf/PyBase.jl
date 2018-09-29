@@ -5,5 +5,7 @@ else
     using Test
 end
 
-# write your own tests here
-@test 1 == 2
+@test begin
+    PyBase.pytest(inprocess = true)
+    true
+end
