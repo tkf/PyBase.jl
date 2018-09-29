@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import sys
 
-from .wrappers import JuliaObject, autopeal, peal
+from .wrappers import JuliaObject, peal
 
 
 def jl_name(name):
@@ -42,8 +42,7 @@ class JuliaAPI(object):
         #                                      wrap=False)
         self._unwrap = self.eval("_unwrap", scope=self.PyBase, wrap=False)
 
-    @autopeal
-    def eval(self, code, wrap=None, **kwargs):
+    def eval(self, code, wrap=None, scope=None, **kwargs):
         """
         Evaluate `code` in `Main` scope of Julia.
 
@@ -108,6 +107,8 @@ class JuliaAPI(object):
             kwargs.setdefault('force_jlwrap', True)
         elif wrap is False:
             kwargs.setdefault('auto_jlwrap', False)
+        if scope is not None:
+            kwargs["scope"] = peal(scope)
         ans = self.eval_str(code, **kwargs)
         if wrap in (True, None):
             return self.maybe_wrap(ans)

@@ -192,4 +192,4 @@ end
 
 end  # module
 
-using .JuliaAPI: pytest
+using .JuliaAPI: pytest, _wrap
