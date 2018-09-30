@@ -83,7 +83,29 @@ end
 (f::MethodShim{<:Any, Nothing})(args...; kwargs...) =
     f.inp(f.shim.self, args...; kwargs...)
 
-function (f::MethodShim)(args...; inplace=true, kwargs...)
+struct Unspecified end
+
+function (f::MethodShim)(args...;
+                         inplace::Union{Unspecified, Bool} = Unspecified(),
+                         kwargs...)
+    if inplace isa Unspecified
+        has_inp = applicable(f.inp, f.shim.self, args...)
+        has_oop = applicable(f.oop, f.shim.self, args...)
+        if has_inp
+            if has_oop
+                error("Ambiguous invocation. `inplace=True` or `inplace=False`",
+                      " must be specified")
+            else
+                return f.inp(f.shim.self, args...; kwargs...)
+            end
+        else
+            if has_oop
+                return f.oop(f.shim.self, args...; kwargs...)
+            else
+                error("$(f.inp) and $(f.oop) do not support given arguments")
+            end
+        end
+    end
     if inplace
         f.inp(f.shim.self, args...; kwargs...)
     else
