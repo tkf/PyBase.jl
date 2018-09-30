@@ -26,12 +26,13 @@ self.NAME(*args, inplace=False, **kwargs)  # => NAME(self, args...; kwargs...)
 self.NAME(*args, inplace=True, **kwargs)   # => NAME!(self, args...; kwargs...)
 ```
 
-The modules in which method `NAME` is searched can be specified as the
-second argument to `PyBase.UFCS.wrap`:
+The modules in which method `NAME` is searched can be specified as a
+keyword argument to `PyBase.UFCS.wrap`:
 
 ```julia
 using MyBase, MyModule
-PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self, [MyBase, MyModule])
+PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self,
+                                                 modules = [MyBase, MyModule])
 ```
 
 The first match in the list of modules is used.
@@ -56,19 +57,41 @@ using ..JuliaAPI: JuliaObject, convert_pyindices
 
 struct Shim{T} <: PyBase.AbstractShim
     self::T
+    methods::Dict{Symbol, Any}
     modules::Vector{Module}
 end
 # If this is not fast enough, we can get the UUID of the modules, put
 # them in the type parameter, and then generate the wrapper in a
 # @generated or @pure function.
 
+_process_method(location::Tuple{Symbol, Any}) = location
+
+function _process_method(location::Function)
+    n = nameof(location)
+    if n == :anonymous
+        throw(ArgumentError(
+            "Use `(name::Symbol, f)` to specify an anonymous function"))
+    end
+    return (n, location)
+end
+
+process_methods(methods::Dict{Symbol, Any}) = methods
+
+process_methods(methods::AbstractVector) =
+    Dict{Symbol, Any}(_process_method.(methods))
+# TODO: error on repeated keys
+
 """
-    PyBase.UFCS.wrap(self, [modules]) :: PyObject
+    PyBase.UFCS.wrap(self; methods, modules) :: PyObject
 
 "Uniform Function Call Syntax" wrapper.  See [`PyBase.UFCS`](@ref) for details.
 """
-wrap(x::T, modules::Vector{Module} = [parentmodule(T)]) where T =
-    JuliaObject(Shim(x, modules))
+wrap(x::T;
+     methods = [],
+     modules::Vector{Module} = [parentmodule(T)]) where T =
+    JuliaObject(Shim(x,
+                     process_methods(methods),
+                     modules))
 
 struct MethodShim{INP, OOP, SHIM}
     name::Symbol
@@ -89,21 +112,13 @@ function (f::MethodShim)(args...;
                          inplace::Union{Unspecified, Bool} = Unspecified(),
                          kwargs...)
     if inplace isa Unspecified
-        has_inp = applicable(f.inp, f.shim.self, args...)
-        has_oop = applicable(f.oop, f.shim.self, args...)
-        if has_inp
-            if has_oop
-                error("Ambiguous invocation. `inplace=True` or `inplace=False`",
-                      " must be specified")
-            else
-                return f.inp(f.shim.self, args...; kwargs...)
-            end
+        if applicable(f.inp, f.shim.self, args...)
+            # Default to inplace=true.
+            return f.inp(f.shim.self, args...; kwargs...)
+        elseif applicable(f.oop, f.shim.self, args...)
+            return f.oop(f.shim.self, args...; kwargs...)
         else
-            if has_oop
-                return f.oop(f.shim.self, args...; kwargs...)
-            else
-                error("$(f.inp) and $(f.oop) do not support given arguments")
-            end
+            error("$(f.inp) and $(f.oop) do not support given arguments")
         end
     end
     if inplace
@@ -148,6 +163,9 @@ function lookup_function(modules, name)
 end
 
 function PyBase.getattr(shim::Shim, name::Symbol)
+    if haskey(shim.methods, name)
+        return MethodShim(name, shim.methods[name], nothing, shim)
+    end
     name! = Symbol(name, :!)
     inp_fun = lookup_function(shim.modules, name!)
     oop_fun = lookup_function(shim.modules, name)
