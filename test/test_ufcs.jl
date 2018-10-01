@@ -37,4 +37,11 @@ using .MyModule: MyType
 end
 
 
+@testset "dir" begin
+    self = PyBase.UFCS.Shim(MyType(0))
+    members = PyBase.dir(self)
+    @test Set(["add1", "add2", "add3"]) <= Set(members)
+end
+
+
 end  # module

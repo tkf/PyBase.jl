@@ -35,3 +35,5 @@ def test_ufcs_struct(julia):
 
     obj.add3()  # default to inplace=True
     assert obj.x == 4
+
+    assert {"add1", "add2", "add3"} <= set(dir(obj))

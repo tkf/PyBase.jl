@@ -44,8 +44,18 @@ function delattr!(::Any, @nospecialize(_::Val{name})) where name
     return nothing
 end
 
-dir(m::Module; kwargs...) = String.(names(m; all=true, kwargs...))
-@shimmed dir(m; all=true) = String.(propertynames(m, all))
+function dir(m::Module; kwargs...)
+    members = String[]
+    for sym in names(m; all=true, kwargs...)
+        str = string(sym)
+        startswith(str, "#") && continue
+        startswith(str, "@") && continue
+        push!(members, rstrip(str, '!'))
+    end
+    return members
+end
+
+@shimmed dir(m; all=true) = collect(String.(propertynames(m, all)))
 
 convert_itemkey(shim::AbstractShim, key) = convert_itemkey(super(shim), key)
 

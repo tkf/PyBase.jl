@@ -192,4 +192,11 @@ function PyBase.getattr(shim::Shim, name::Symbol)
     end
 end
 
+function PyBase.dir(shim::Shim)
+    member_names = PyBase.dir(shim.self)
+    append!(member_names, String.(keys(shim.methods)))
+    append!(member_names, vcat(PyBase.dir.(shim.modules)...))
+    return member_names
+end
+
 end  # module
