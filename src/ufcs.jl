@@ -101,6 +101,11 @@ end
 
 (f::MethodShim)(args...; kwargs...) = f.f(f.shim.self, args...; kwargs...)
 
+function Base.show(io::IO, f::MethodShim)
+    print(io, "[shim] ")
+    show(io, f.f)
+end
+
 PyCall.docstring(f::MethodShim) = PyCall.docstring(f.f)
 
 struct DualMethodShim
@@ -130,6 +135,13 @@ function (f::DualMethodShim)(args...;
     else
         f.oop(f.shim.self, args...; kwargs...)
     end
+end
+
+function Base.show(io::IO, f::DualMethodShim)
+    print(io, "[shim] ")
+    show(io, f.inp)
+    print(io, " | ")
+    show(io, f.oop)
 end
 
 function PyCall.docstring(f::DualMethodShim)
