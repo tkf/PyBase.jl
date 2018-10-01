@@ -410,46 +410,41 @@ class JuliaObject(object):
         return self.__ireturn(self.__ior(self.__jlwrap, other))
 
     def __neg__(self):
-        return self.__julia.eval("-")(self.__jlwrap)
+        return self.__neg(self.__jlwrap)
 
     def __pos__(self):
-        return self.__julia.eval("+")(self.__jlwrap)
+        return self.__pos(self.__jlwrap)
 
     def __abs__(self):
-        return self.__julia.eval("abs")(self.__jlwrap)
+        return self.__abs(self.__jlwrap)
 
     def __invert__(self):
-        return self.__julia.eval("~")(self.__jlwrap)
+        return self.__invert(self.__jlwrap)
 
     def __complex__(self):
-        jlcomplex = self.__julia.eval("ComplexF64")
-        return complex(peal(jlcomplex(self.__jlwrap)))
+        return complex(peal(self.__complex(self.__jlwrap)))
 
     def __int__(self):
-        jlint = self.__julia.eval("Int128")
-        return int(peal(jlint(self.__jlwrap)))
+        return int(peal(self.__int(self.__jlwrap)))
 
     def __float__(self):
-        jlfloat = self.__julia.eval("Float64")
-        return float(peal(jlfloat(self.__jlwrap)))
+        return float(peal(self.__float(self.__jlwrap)))
 
     # TODO: Use BigFloat/BigInt if mpmath is installed.
 
     # TODO: def __index__(self)
 
     def __round__(self, ndigits=None):
-        if ndigits is None:
-            ndigits = 0
-        return self.__julia.eval("round")(self.__jlwrap, digits=ndigits)
+        return self.__round(self.__jlwrap, ndigits)
 
     def __trunc__(self):
-        return self.__julia.eval("trunc")(self.__jlwrap)
+        return self.__trunc(self.__jlwrap)
 
     def __floor__(self):
-        return self.__julia.eval("floor")(self.__jlwrap)
+        return self.__floor(self.__jlwrap)
 
     def __ceil__(self):
-        return self.__julia.eval("ceil")(self.__jlwrap)
+        return self.__ceil(self.__jlwrap)
 
     def _repr_mimebundle_(self, include=None, exclude=None):
         mimes = include or self.__config.mime_include or [

@@ -5,7 +5,7 @@ _gen_doc(stem, jl) = """
     __$(stem)__(self, other)
 
 Python's $(_pymodelref("__$(stem)__")).
-Default implementation: `$jl(self, other)`.
+Default implementation is roughly: `broadcast($jl, self, other)`.
 """
 
 _gen_rdoc(stem) = """
@@ -77,3 +77,44 @@ function __imatmul__(y, a, b)
         return _wrap(a * b)
     end
 end
+
+
+for (stem, jl) in [
+        (:neg, -),
+        (:pos, +),
+        (:abs, abs),
+        (:invert, ~),
+        (:complex, ComplexF64),
+        (:int, Int128),
+        (:float, Float64),
+        # TODO: Use BigFloat/BigInt if mpmath is installed?
+        (:trunc, trunc),
+        (:floor, floor),
+        (:ceil, ceil),
+        ]
+    py = Symbol(:__, stem, :__)
+    @eval $py(a) = _wrap($jl(a))
+    doc = """
+        __$(stem)__(self)
+
+    Python's $(_pymodelref("__$(stem)__")).
+    Default implementation is roughly: `$jl(self)`.
+    """
+    @eval @doc $doc $py
+end
+
+
+"""
+    __round__(self, [ndigits = nothing])
+
+Python's $(_pymodelref("__round__")).
+Default implementation is roughly:
+
+```julia
+__round__(self) = round(self)
+__round__(self, ndigits) = round(self, digits=ndigits)
+```
+"""
+__round__(self) = _wrap(round(self))
+__round__(self, ::Nothing) = __round__(self)
+__round__(self, ndigits) = _wrap(round(self, digits=ndigits))
