@@ -93,24 +93,28 @@ wrap(x::T;
                      process_methods(methods),
                      modules))
 
-struct MethodShim{INP, OOP, SHIM}
+struct MethodShim
     name::Symbol
-    inp::INP
-    oop::OOP
-    shim::SHIM
+    f
+    shim::Shim
 end
 
-(f::MethodShim{Nothing})(args...; kwargs...) =
-    f.oop(f.shim.self, args...; kwargs...)
+(f::MethodShim)(args...; kwargs...) = f.f(f.shim.self, args...; kwargs...)
 
-(f::MethodShim{<:Any, Nothing})(args...; kwargs...) =
-    f.inp(f.shim.self, args...; kwargs...)
+PyCall.docstring(f::MethodShim) = PyCall.docstring(f.f)
+
+struct DualMethodShim
+    name::Symbol
+    inp
+    oop
+    shim::Shim
+end
 
 struct Unspecified end
 
-function (f::MethodShim)(args...;
-                         inplace::Union{Unspecified, Bool} = Unspecified(),
-                         kwargs...)
+function (f::DualMethodShim)(args...;
+                             inplace::Union{Unspecified, Bool} = Unspecified(),
+                             kwargs...)
     if inplace isa Unspecified
         if applicable(f.inp, f.shim.self, args...)
             # Default to inplace=true.
@@ -128,30 +132,24 @@ function (f::MethodShim)(args...;
     end
 end
 
-function PyCall.docstring(f::MethodShim)
-    if f.inp isa Nothing
-        return PyCall.docstring(f.oop)
-    elseif f.oop isa Nothing
-        return PyCall.docstring(f.inp)
-    else
-        oop_name = string(f.oop)
-        inp_name = string(f.inp)
-        return """
-        A wrapper of $oop_name and $inp_name.
+function PyCall.docstring(f::DualMethodShim)
+    oop_name = string(f.oop)
+    inp_name = string(f.inp)
+    return """
+    A wrapper of $oop_name and $inp_name.
 
-        If keyword argument `inplace=True` (default) is given, it
-        calls $inp_name.  If `inplace=False` is given, it calls
-        $oop_name.
+    If keyword argument `inplace=True` (default) is given, it
+    calls $inp_name.  If `inplace=False` is given, it calls
+    $oop_name.
 
-        ---
+    ---
 
-        $(PyCall.docstring(f.oop))
+    $(PyCall.docstring(f.oop))
 
-        ---
+    ---
 
-        $(PyCall.docstring(f.inp))
-        """
-    end
+    $(PyCall.docstring(f.inp))
+    """
 end
 
 function lookup_function(modules, name)
@@ -164,13 +162,17 @@ end
 
 function PyBase.getattr(shim::Shim, name::Symbol)
     if haskey(shim.methods, name)
-        return MethodShim(name, shim.methods[name], nothing, shim)
+        return MethodShim(name, shim.methods[name], shim)
     end
     name! = Symbol(name, :!)
     inp_fun = lookup_function(shim.modules, name!)
     oop_fun = lookup_function(shim.modules, name)
-    if inp_fun != nothing || oop_fun != nothing
-        return MethodShim(name, inp_fun, oop_fun, shim)
+    if inp_fun != nothing && oop_fun != nothing
+        return DualMethodShim(name, inp_fun, oop_fun, shim)
+    elseif inp_fun != nothing
+        return MethodShim(name, inp_fun, shim)
+    elseif oop_fun != nothing
+        return MethodShim(name, oop_fun, shim)
     else
         return PyBase.getattr(shim.self, name)
     end
