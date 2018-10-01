@@ -1,3 +1,9 @@
+#!/bin/bash
+# -*- mode: julia -*-
+#=
+exec ${JULIA:-julia} --color=yes --startup-file=no "${BASH_SOURCE[0]}" "$@"
+=#
+
 module TestPyBase
 
 include("preamble.jl")

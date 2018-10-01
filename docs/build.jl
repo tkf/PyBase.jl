@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- mode: julia -*-
 #=
-exec julia --color=yes --startup-file=no "${BASH_SOURCE[0]}" "$@"
+exec ${JULIA:-julia} --color=yes --startup-file=no "${BASH_SOURCE[0]}" "$@"
 =#
 
 using Documenter
