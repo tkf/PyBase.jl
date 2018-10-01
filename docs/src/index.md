@@ -118,4 +118,7 @@ PyBase.convert_itemkey
 PyBase.__getitem__
 PyBase.__setitem__
 PyBase.__delitem__
+PyBase.__add__
+PyBase.__radd__
+PyBase.__iadd__
 ```

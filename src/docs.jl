@@ -1,3 +1,6 @@
+_pymodelref(name) =
+    "[`$name`](https://docs.python.org/3/reference/datamodel.html#object.$name)"
+
 """
     PyBase.__getattr__(self, ::Val{name::Symbol})
     PyBase.__getattr__(self, name::Symbol)
