@@ -461,8 +461,8 @@ class JuliaObject(object):
         ]
         exclude = exclude or self.__config.mime_exclude
 
-        showable = self.__julia.eval("showable")
-        showraw = self.__julia.eval("""
+        showable = self.__julia.showable
+        showraw = self.__julia.cached_eval("""
         (obj, mimetype) -> begin
             io = IOBuffer()
             show(IOContext(io, :color => true), mimetype, obj)

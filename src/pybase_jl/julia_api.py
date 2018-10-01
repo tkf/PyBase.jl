@@ -43,6 +43,8 @@ class JuliaAPI(object):
         #                                      wrap=False)
         self._unwrap = self.eval("_unwrap", scope=self.PyBase, wrap=False)
 
+        self._cache = {}
+
     def eval(self, code, wrap=None, scope=None, **kwargs):
         """
         Evaluate `code` in `Main` scope of Julia.
@@ -113,6 +115,14 @@ class JuliaAPI(object):
         ans = self.eval_str(code, **kwargs)
         if wrap in (True, None):
             return self.maybe_wrap(ans)
+        return ans
+
+    def cached_eval(self, code, **kwargs):
+        try:
+            return self._cache[code]
+        except KeyError:
+            pass
+        self._cache[code] = ans = self.eval(code, **kwargs)
         return ans
 
     @autopeal
