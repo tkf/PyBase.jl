@@ -81,17 +81,19 @@ process_methods(methods::AbstractVector) =
     Dict{Symbol, Any}(_process_method.(methods))
 # TODO: error on repeated keys
 
+Shim(self::T;
+     methods = [],
+     modules::Vector{Module} = [parentmodule(T)]) where T =
+    Shim(self,
+         process_methods(methods),
+         modules)
+
 """
     PyBase.UFCS.wrap(self; methods, modules) :: PyObject
 
 "Uniform Function Call Syntax" wrapper.  See [`PyBase.UFCS`](@ref) for details.
 """
-wrap(x::T;
-     methods = [],
-     modules::Vector{Module} = [parentmodule(T)]) where T =
-    JuliaObject(Shim(x,
-                     process_methods(methods),
-                     modules))
+wrap(self; kwargs...) = JuliaObject(Shim(self; kwargs...))
 
 struct MethodShim
     name::Symbol
