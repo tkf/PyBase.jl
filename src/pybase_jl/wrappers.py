@@ -272,94 +272,94 @@ class JuliaObject(object):
         return self.__julia.eval("in")(item, self.__jlwrap)
 
     def __add__(self, other):
-        return self.__add(self.__jlwrap, peal(other))
+        return self.__add(self.__jlwrap, other)
 
     def __sub__(self, other):
-        return self.__sub(self.__jlwrap, peal(other))
+        return self.__sub(self.__jlwrap, other)
 
     def __mul__(self, other):
-        return self.__mul(self.__jlwrap, peal(other))
+        return self.__mul(self.__jlwrap, other)
 
     def __matmul__(self, other):
-        return self.__matmul(self.__jlwrap, peal(other))
+        return self.__matmul(self.__jlwrap, other)
 
     def __truediv__(self, other):
-        return self.__truediv(self.__jlwrap, peal(other))
+        return self.__truediv(self.__jlwrap, other)
 
     def __floordiv__(self, other):
         """ Call `div` (`÷`), *not* `//`, in Julia. """
-        return self.__floordiv(self.__jlwrap, peal(other))
+        return self.__floordiv(self.__jlwrap, other)
 
     def __mod__(self, other):
-        return self.__mod(self.__jlwrap, peal(other))
+        return self.__mod(self.__jlwrap, other)
 
     def __divmod__(self, other):
-        d, m = self.__divmod(self.__jlwrap, peal(other))
+        d, m = self.__divmod(self.__jlwrap, other)
         return (self.__julia.maybe_wrap(d),
                 self.__julia.maybe_wrap(m))
 
     def __pow__(self, other, modulo=unspecified):
         if modulo is unspecified:
-            return self.__pow(self.__jlwrap, peal(other))
+            return self.__pow(self.__jlwrap, other)
         else:
-            return self.__pow(self.__jlwrap, peal(other), peal(modulo))
+            return self.__pow(self.__jlwrap, other, modulo)
 
     def __lshift__(self, other):
-        return self.__lshift(self.__jlwrap, peal(other))
+        return self.__lshift(self.__jlwrap, other)
 
     def __rshift__(self, other):
-        return self.__rshift(self.__jlwrap, peal(other))
+        return self.__rshift(self.__jlwrap, other)
 
     def __and__(self, other):
-        return self.__and(self.__jlwrap, peal(other))
+        return self.__and(self.__jlwrap, other)
 
     def __xor__(self, other):
-        return self.__xor(self.__jlwrap, peal(other))
+        return self.__xor(self.__jlwrap, other)
 
     def __or__(self, other):
-        return self.__or(self.__jlwrap, peal(other))
+        return self.__or(self.__jlwrap, other)
 
     def __radd__(self, other):
-        return self.__radd(self.__jlwrap, peal(other))
+        return self.__radd(self.__jlwrap, other)
 
     def __rsub__(self, other):
-        return self.__rsub(self.__jlwrap, peal(other))
+        return self.__rsub(self.__jlwrap, other)
 
     def __rmul__(self, other):
-        return self.__rmul(self.__jlwrap, peal(other))
+        return self.__rmul(self.__jlwrap, other)
 
     def __rmatmul__(self, other):
-        return self.__rmatmul(self.__jlwrap, peal(other))
+        return self.__rmatmul(self.__jlwrap, other)
 
     def __rtruediv__(self, other):
-        return self.__rtruediv(self.__jlwrap, peal(other))
+        return self.__rtruediv(self.__jlwrap, other)
 
     def __rfloordiv__(self, other):
-        return self.__rfloordiv(self.__jlwrap, peal(other))
+        return self.__rfloordiv(self.__jlwrap, other)
 
     def __rmod__(self, other):
-        return self.__rmod(self.__jlwrap, peal(other))
+        return self.__rmod(self.__jlwrap, other)
 
     def __rdivmod__(self, other):
-        return self.__rdivmod(self.__jlwrap, peal(other))
+        return self.__rdivmod(self.__jlwrap, other)
 
     def __rpow__(self, other):
-        return self.__rpow(self.__jlwrap, peal(other))
+        return self.__rpow(self.__jlwrap, other)
 
     def __rlshift__(self, other):
-        return self.__rlshift(self.__jlwrap, peal(other))
+        return self.__rlshift(self.__jlwrap, other)
 
     def __rrshift__(self, other):
-        return self.__rrshift(self.__jlwrap, peal(other))
+        return self.__rrshift(self.__jlwrap, other)
 
     def __rand__(self, other):
-        return self.__rand(self.__jlwrap, peal(other))
+        return self.__rand(self.__jlwrap, other)
 
     def __rxor__(self, other):
-        return self.__rxor(self.__jlwrap, peal(other))
+        return self.__rxor(self.__jlwrap, other)
 
     def __ror__(self, other):
-        return self.__ror(self.__jlwrap, peal(other))
+        return self.__ror(self.__jlwrap, other)
 
     def __ireturn(self, ret):
         if ret is None:
@@ -367,47 +367,47 @@ class JuliaObject(object):
         return ret
 
     def __iadd__(self, other):
-        return self.__ireturn(self.__iadd(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__iadd(self.__jlwrap, other))
 
     def __isub__(self, other):
-        return self.__ireturn(self.__isub(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__isub(self.__jlwrap, other))
 
     def __imul__(self, other):
-        return self.__ireturn(self.__imul(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__imul(self.__jlwrap, other))
 
     def __imatmul__(self, other):
-        return self.__ireturn(self.__imatmul(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__imatmul(self.__jlwrap, other))
 
     def __itruediv__(self, other):
-        return self.__ireturn(self.__itruediv(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__itruediv(self.__jlwrap, other))
 
     def __ifloordiv__(self, other):
-        return self.__ireturn(self.__ifloordiv(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__ifloordiv(self.__jlwrap, other))
 
     def __imod__(self, other):
-        return self.__ireturn(self.__imod(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__imod(self.__jlwrap, other))
 
     def __ipow__(self, other, modulo=unspecified):
         if modulo is unspecified:
-            ret = self.__ipow(self.__jlwrap, peal(other))
+            ret = self.__ipow(self.__jlwrap, other)
         else:
-            ret = self.__ipow(self.__jlwrap, peal(other), peal(modulo))
+            ret = self.__ipow(self.__jlwrap, other, modulo)
         return self.__ireturn(ret)
 
     def __ilshift__(self, other):
-        return self.__ireturn(self.__ilshift(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__ilshift(self.__jlwrap, other))
 
     def __irshift__(self, other):
-        return self.__ireturn(self.__irshift(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__irshift(self.__jlwrap, other))
 
     def __iand__(self, other):
-        return self.__ireturn(self.__iand(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__iand(self.__jlwrap, other))
 
     def __ixor__(self, other):
-        return self.__ireturn(self.__ixor(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__ixor(self.__jlwrap, other))
 
     def __ior__(self, other):
-        return self.__ireturn(self.__ior(self.__jlwrap, peal(other)))
+        return self.__ireturn(self.__ior(self.__jlwrap, other))
 
     def __neg__(self):
         return self.__julia.eval("-")(self.__jlwrap)
