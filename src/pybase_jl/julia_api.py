@@ -37,7 +37,8 @@ class JuliaAPI(object):
         self.__wrapcall = self.eval("wrapcall", wrap=False, scope=self.api)
 
         self.PyBase = self.lookupapi((self.api, "PyBase"), wrap=False)
-        self._getattr = self.lookupapi((self.PyBase, "getattr"), wrap=False)
+        self._getattr = self.lookupapi((self.PyBase, "__getattr__"),
+                                       wrap=False)
         # self.default_flavor = self.lookupapi((self.PyBase, "Plain.wrap"),
         #                                      wrap=False)
         self._unwrap = self.eval("_unwrap", scope=self.PyBase, wrap=False)
@@ -124,12 +125,9 @@ class JuliaAPI(object):
             return self.__getattribute__(name)
         except AttributeError:
             obj = self.lookupapi(
-                (self.api, name),
                 (self.api, jl_name(name)),
-                (self.api, name + "!"),
-                (self.PyBase, name),
                 (self.PyBase, jl_name(name)),
-                (self.PyBase, name + "!"),
+                (self.PyBase, "__" + name + "__"),
                 exception=AttributeError(name))
             setattr(self, name, obj)
             return obj

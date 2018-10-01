@@ -9,19 +9,19 @@ Base.show(io::IO, shim::AbstractShim) = show(io, super(shim))
 
 _unwrap(x::Any) = x
 
-getattr(self::Any, name::AbstractString) = getattr(self, Symbol(name))
-setattr!(self::Any, name::AbstractString, value) =
-    setattr!(self, Symbol(name), value)
-delattr!(self::Any, name::AbstractString) = delattr!(self, Symbol(name))
+__getattr__(self::Any, name::AbstractString) = __getattr__(self, Symbol(name))
+__setattr__(self::Any, name::AbstractString, value) =
+    __setattr__(self, Symbol(name), value)
+__delattr__(self::Any, name::AbstractString) = __delattr__(self, Symbol(name))
 
 @shimmed begin
-    getattr(self::Any, name::Symbol) = getattr(self, Val(name))
-    setattr!(self::Any, name::Symbol, value::Any) =
-        setattr!(self, Val(name), value)
-    delattr!(self::Any, name::Symbol) = delattr!(self, Val(name))
+    __getattr__(self::Any, name::Symbol) = __getattr__(self, Val(name))
+    __setattr__(self::Any, name::Symbol, value::Any) =
+        __setattr__(self, Val(name), value)
+    __delattr__(self::Any, name::Symbol) = __delattr__(self, Val(name))
 end
 
-function getattr(self::Any, @nospecialize(_::Val{name})) where name
+function __getattr__(self::Any, @nospecialize(_::Val{name})) where name
     try
         return getproperty(self, name)
     catch ex
@@ -30,7 +30,8 @@ function getattr(self::Any, @nospecialize(_::Val{name})) where name
     pyraise(pybuiltin("AttributeError")(String(name)))
 end
 
-function setattr!(self::Any, @nospecialize(_::Val{name}), value::Any) where name
+function __setattr__(self::Any, @nospecialize(_::Val{name}), value::Any
+                     ) where name
     try
         setproperty!(self, name, value)
     catch
@@ -39,12 +40,12 @@ function setattr!(self::Any, @nospecialize(_::Val{name}), value::Any) where name
     return nothing
 end
 
-function delattr!(::Any, @nospecialize(_::Val{name})) where name
+function __delattr__(::Any, @nospecialize(_::Val{name})) where name
     pyraise(pybuiltin("AttributeError")(String(name)))
     return nothing
 end
 
-function dir(m::Module; kwargs...)
+function __dir__(m::Module; kwargs...)
     members = String[]
     for sym in names(m; all=true, kwargs...)
         str = string(sym)
@@ -55,15 +56,15 @@ function dir(m::Module; kwargs...)
     return members
 end
 
-@shimmed dir(m; all=true) = collect(String.(propertynames(m, all)))
+@shimmed __dir__(m; all=true) = collect(String.(propertynames(m, all)))
 
 convert_itemkey(shim::AbstractShim, key) = convert_itemkey(super(shim), key)
 
 @shimmed begin
-    getitem(self, key) =
+    __getitem__(self, key) =
         getindex(self, convert_itemkey(self, key)...)
-    setitem!(self, key, value) =
+    __setitem__(self, key, value) =
         setindex!(self, value, convert_itemkey(self, key)...)
-    delitem!(self, key) =
+    __delitem__(self, key) =
         delete!(self, convert_itemkey(self, key)...)
 end

@@ -17,7 +17,7 @@ def test_ufcs_struct(julia):
     add3(self::MyType) = self.x + 3
     add3!(self::MyType) = self.x += 3
 
-    PyBase.getattr(self::MyType, ::Val{:explicit_method}) =
+    PyBase.__getattr__(self::MyType, ::Val{:explicit_method}) =
         (arg) -> ("explicit method call", self, arg)
 
     MyType

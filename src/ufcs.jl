@@ -40,8 +40,8 @@ The first match in the list of modules is used.
 Usual method overloading of
 
 ```julia
-PyBase.getattr(self::MyModule.MyType, name::Symbol)  # and/or
-PyBase.getattr(self::MyModule.MyType, ::Val{name})
+PyBase.__getattr__(self::MyModule.MyType, name::Symbol)  # and/or
+PyBase.__getattr__(self::MyModule.MyType, ::Val{name})
 ```
 
 can still control the behavior of Python's `__getattr__` *if* `name`
@@ -174,7 +174,7 @@ function lookup_function(modules, name)
     end
 end
 
-function PyBase.getattr(shim::Shim, name::Symbol)
+function PyBase.__getattr__(shim::Shim, name::Symbol)
     if haskey(shim.methods, name)
         return MethodShim(name, shim.methods[name], shim)
     end
@@ -188,14 +188,14 @@ function PyBase.getattr(shim::Shim, name::Symbol)
     elseif oop_fun != nothing
         return MethodShim(name, oop_fun, shim)
     else
-        return PyBase.getattr(shim.self, name)
+        return PyBase.__getattr__(shim.self, name)
     end
 end
 
-function PyBase.dir(shim::Shim)
-    member_names = PyBase.dir(shim.self)
+function PyBase.__dir__(shim::Shim)
+    member_names = PyBase.__dir__(shim.self)
     append!(member_names, String.(keys(shim.methods)))
-    append!(member_names, vcat(PyBase.dir.(shim.modules)...))
+    append!(member_names, vcat(PyBase.__dir__.(shim.modules)...))
     return member_names
 end
 

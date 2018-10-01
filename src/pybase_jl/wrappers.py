@@ -186,13 +186,9 @@ class JuliaObject(object):
         except AttributeError:
             pass
         if name.startswith("_JuliaObject__"):
-            jlname = name[len("_JuliaObject__"):]
+            jlname = "__" + name[len("_JuliaObject__"):] + "__"
             PyBase = self.__julia.PyBase
-            if jlname.startswith("i"):
-                ret = self.__julia._getattr(PyBase, jlname[1:] + "!")
-            else:
-                ret = self.__julia._getattr(PyBase, jlname)
-            self.__dict__[name] = ret
+            self.__dict__[name] = ret = self.__julia.getattr(PyBase, jlname)
             return ret
         return self.__julia.getattr(self.__jlwrap, name)
 

@@ -74,10 +74,10 @@ julia> py"""
 ```
 
 It may be useful to provide custom Python methods.  This can be done
-by overloading [`PyBase.getattr`](@ref):
+by overloading [`PyBase.__getattr__`](@ref):
 
 ```jldoctest ufcs-example
-julia> PyBase.getattr(self::MyType, ::Val{:explicit_method}) =
+julia> PyBase.__getattr__(self::MyType, ::Val{:explicit_method}) =
            (arg) -> "explicit method call with $arg"
 
 julia> py"""
@@ -105,16 +105,17 @@ PyBase.Plain.wrap
 
 `PyBase` provides interface for defining special methods for
 [Python data model](https://docs.python.org/3/reference/datamodel.html).
-For Python's method `__$NAME__`, you can overload `PyBase.$NAME` or
-`PyBase.$NAME!` (if it is expected to mutate `self`).
+Note that these methods do _not_ follow Julia's convention that
+mutating functions have to end with `!` to avoid extra complication of
+naming transformation.
 
 ```@docs
-PyBase.getattr
-PyBase.setattr!
-PyBase.delattr!
-PyBase.dir
+PyBase.__getattr__
+PyBase.__setattr__
+PyBase.__delattr__
+PyBase.__dir__
 PyBase.convert_itemkey
-PyBase.getitem
-PyBase.setitem!
-PyBase.delitem!
+PyBase.__getitem__
+PyBase.__setitem__
+PyBase.__delitem__
 ```

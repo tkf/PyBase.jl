@@ -23,13 +23,13 @@ using .MyModule: MyType
 @testset "show" begin
     self = PyBase.UFCS.Shim(MyType(0))
 
-    for shim in [PyBase.getattr(self, :add1),
-                 PyBase.getattr(self, :add2)]
+    for shim in [PyBase.__getattr__(self, :add1),
+                 PyBase.__getattr__(self, :add2)]
         @test shim isa MethodShim
         @test occursin("[shim] ", string(shim))
     end
 
-    let shim = PyBase.getattr(self, :add3)
+    let shim = PyBase.__getattr__(self, :add3)
         @test shim isa DualMethodShim
         @test occursin("[shim] ", string(shim))
         @test occursin(" | ", string(shim))
@@ -37,9 +37,9 @@ using .MyModule: MyType
 end
 
 
-@testset "dir" begin
+@testset "__dir__" begin
     self = PyBase.UFCS.Shim(MyType(0))
-    members = PyBase.dir(self)
+    members = PyBase.__dir__(self)
     @test Set(["add1", "add2", "add3"]) <= Set(members)
 end
 
