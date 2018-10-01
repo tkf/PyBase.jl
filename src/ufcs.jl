@@ -192,7 +192,4 @@ function PyBase.getattr(shim::Shim, name::Symbol)
     end
 end
 
-PyBase.convert_itemkey(shim::Shim, key) =
-    convert_pyindices(shim.self, key)
-
 end  # module
