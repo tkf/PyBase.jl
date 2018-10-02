@@ -9,6 +9,10 @@ module TestPyBase
 const IS_CI = lowercase(get(ENV, "CI", "false")) == "true"
 @show IS_CI
 
+if IS_CI
+    ENV["MPLBACKEND"] = "agg"
+end
+
 using PyCall
 conda_packages = [
     "pytest",
