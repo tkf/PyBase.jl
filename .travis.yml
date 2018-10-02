@@ -11,7 +11,7 @@ git:
   depth: 99999999
 
 env:
-  - CONDA=""
+  - PYTHON=Conda  # makes PyCall.jl use Conda.jl
 
 ## uncomment the following lines to allow failures on nightly julia
 ## (tests will run but not make your overall status red)
@@ -24,13 +24,6 @@ env:
 #  apt: # apt-get for linux
 #    packages:
 #    - gfortran
-before_script:
-  - sudo apt-get -qq update && sudo apt-get install -y python3-pip
-  - pip3 --version
-  - pip3 install --user --upgrade pip
-  - which pip
-  - pip --version
-  - pip install --user matplotlib pytest traitlets
 
 ## uncomment the following lines to override the default test script
 #script:

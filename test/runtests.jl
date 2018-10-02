@@ -6,6 +6,28 @@ exec ${JULIA:-julia} --color=yes --startup-file=no "${BASH_SOURCE[0]}" "$@"
 
 module TestPyBase
 
+const IS_CI = lowercase(get(ENV, "CI", "false")) == "true"
+@show IS_CI
+
+using PyCall
+conda_packages = [
+    "pytest",
+    "traitlets"
+]
+try
+    if IS_CI
+        for name in conda_packages
+            PyCall.pyimport_conda(name, name)
+        end
+    else
+        for name in conda_packages
+            PyCall.pyimport(name)
+        end
+    end
+catch exception
+    @error "Test dependencies not satisfied." exception
+end
+
 include("preamble.jl")
 
 @testset "$file" for file in [
