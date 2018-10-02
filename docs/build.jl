@@ -12,5 +12,5 @@ makedocs(
     repo = "https://github.com/tkf/PyBase.jl/blob/{commit}{path}#{line}",
     format = :html,
     doctest = true,
-    # strict = true,
+    strict = true,
 )
