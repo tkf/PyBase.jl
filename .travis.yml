@@ -35,3 +35,12 @@ after_success:
   - julia --color=yes -e 'using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
   - julia --color=yes -e 'using Coverage; Codecov.submit(Codecov.process_folder())'
+
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - docs/make.jl
+      after_success: skip
