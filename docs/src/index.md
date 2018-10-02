@@ -122,3 +122,11 @@ PyBase.__add__
 PyBase.__radd__
 PyBase.__iadd__
 ```
+
+### List of supported methods
+
+```@eval
+import Markdown
+import PyBase
+Markdown.MD(PyBase.SupportedMethods())
+```

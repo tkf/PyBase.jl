@@ -7,5 +7,6 @@ include("julia_api.jl")
 include("default.jl")
 include("plain.jl")
 include("ufcs.jl")
+include("supported_methods.jl")
 
 end # module
