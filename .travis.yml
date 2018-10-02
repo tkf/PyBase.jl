@@ -2,14 +2,16 @@
 language: julia
 os:
   - linux
-  - osx
 julia:
-  - 0.6
+  - 1.0
   - nightly
 notifications:
   email: false
 git:
   depth: 99999999
+
+env:
+  - CONDA=""
 
 ## uncomment the following lines to allow failures on nightly julia
 ## (tests will run but not make your overall status red)
@@ -22,14 +24,17 @@ git:
 #  apt: # apt-get for linux
 #    packages:
 #    - gfortran
-#before_script: # homebrew for mac
-#  - if [ $TRAVIS_OS_NAME = osx ]; then brew install gcc; fi
+before_script:
+  - sudo apt-get -qq update && sudo apt-get install -y python3-pip
+  - pip3 install --user matplotlib pytest
 
 ## uncomment the following lines to override the default test script
 #script:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("PyBase"); Pkg.test("PyBase"; coverage=true)'
 after_success:
+  - cat Manifest.toml
+  - julia --color=yes -e 'using Pkg; Pkg.add("Coverage")'
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("PyBase")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia --color=yes -e 'using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("PyBase")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia --color=yes -e 'using Coverage; Codecov.submit(Codecov.process_folder())'
