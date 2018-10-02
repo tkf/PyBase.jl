@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-It's just one line (per type):
+It takes just one line (per type) to define a Python interface:
 
 ```julia
 using MyModule: MyType
@@ -13,8 +13,9 @@ PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self)
 # PyCall.PyObject(self::MyType) = PyBase.Plain.wrap(self)  # alternative
 ```
 
-Then `MyType` can be usable from Python via
-`from julia.MyModule import MyType`.
+It defines an interface for `MyType` which can be imported from Python
+by `from julia.MyModule import MyType` via
+[PyJulia](https://github.com/JuliaPy/pyjulia).
 
 ## Overview
 
