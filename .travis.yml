@@ -30,7 +30,7 @@ before_script:
   - pip3 install --user --upgrade pip
   - which pip
   - pip --version
-  - pip install --user matplotlib pytest
+  - pip install --user matplotlib pytest traitlets
 
 ## uncomment the following lines to override the default test script
 #script:
