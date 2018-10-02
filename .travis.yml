@@ -26,7 +26,11 @@ env:
 #    - gfortran
 before_script:
   - sudo apt-get -qq update && sudo apt-get install -y python3-pip
-  - pip3 install --user matplotlib pytest
+  - pip3 --version
+  - pip3 install --user --upgrade pip
+  - which pip
+  - pip --version
+  - pip install --user matplotlib pytest
 
 ## uncomment the following lines to override the default test script
 #script:
