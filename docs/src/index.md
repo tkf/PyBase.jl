@@ -1,8 +1,25 @@
 # PyBase.jl
 
+## TL;DR
+
+It's just one line (per type):
+
+```julia
+using MyModule: MyType
+using PyCall
+using PyBase
+
+PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self)
+# PyCall.PyObject(self::MyType) = PyBase.Plain.wrap(self)  # alternative
+```
+
+Then `MyType` can be usable from Python via
+`from julia.MyModule import MyType`.
+
 ## Overview
 
-Suppose you have a Julia type and expose its API to the Python world:
+Suppose you have a Julia type and want to expose its API to the Python
+world:
 
 ```jldoctest ufcs-example
 julia> mutable struct MyType
@@ -27,10 +44,9 @@ julia> using PyCall
 julia> PyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self);
 ```
 
-Then Python users can use `MyType` as a Python object constructor by
-importing it `from julia.MyModule import MyType`.  Here, for a
-demonstration purpose, let's send it to Python namespace using
-PyCall's `@py_str` macro:
+Now `MyType` is usable from Python.  Here, for a demonstration
+purpose, let's send it to Python namespace using PyCall's `@py_str`
+macro:
 
 ```jldoctest ufcs-example
 julia> py"""
@@ -82,6 +98,21 @@ julia> PyBase.__getattr__(self::MyType, ::Val{:explicit_method}) =
 
 julia> py"""
        assert obj.explicit_method(123) == "explicit method call with 123"
+       """
+```
+
+Note that various Julia interfaces are automatically usable from
+Python.  For example, indexing just works by translating indices as
+the offsets from `Base.firstindex` (which keeps 0-origin in Python
+side):
+
+```jldoctest ufcs-example
+julia> Base.firstindex(obj::MyType) = 1;
+
+julia> Base.getindex(obj::MyType, i::Integer) = i;
+
+julia> py"""
+       assert obj[0] == 1
        """
 ```
 
