@@ -1,6 +1,6 @@
 # PyBase.jl --- Toward Julian interface for Pythonic wrapper
 
-[![Latest documentation][docs-latest-img]](docs-latest-url)
+[![Latest documentation][docs-latest-img]][docs-latest-url]
 [![Travis Status][travis-img]][travis-url]
 [![Coverage Status][coveralls-img]][coveralls-url]
 [![codecov.io][codecov-img]][codecov-url]
