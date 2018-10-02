@@ -21,7 +21,7 @@ var documenterSearchIndex = {"docs": [
     "page": "PyBase.jl",
     "title": "TL;DR",
     "category": "section",
-    "text": "It\'s just one line (per type):using MyModule: MyType\nusing PyCall\nusing PyBase\n\nPyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self)\n# PyCall.PyObject(self::MyType) = PyBase.Plain.wrap(self)  # alternativeThen MyType can be usable from Python via from julia.MyModule import MyType."
+    "text": "It takes just one line (per type) to define a Python interface:using MyModule: MyType\nusing PyCall\nusing PyBase\n\nPyCall.PyObject(self::MyType) = PyBase.UFCS.wrap(self)\n# PyCall.PyObject(self::MyType) = PyBase.Plain.wrap(self)  # alternativeIt defines an interface for MyType which can be imported from Python by from julia.MyModule import MyType via PyJulia."
 },
 
 {
