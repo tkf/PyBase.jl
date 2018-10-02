@@ -5,6 +5,9 @@
 [![Coverage Status][coveralls-img]][coveralls-url]
 [![codecov.io][codecov-img]][codecov-url]
 
+* [Documentation][docs-latest-url]
+* [Example notebook](https://nbviewer.jupyter.org/gist/tkf/ef78c4b625774414974f9d98fbe57026)
+
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [docs-latest-url]: https://tkf.github.io/PyBase.jl/latest
